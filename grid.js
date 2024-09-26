@@ -6,11 +6,17 @@ export class Grid {
     }
 
     get(row, col) {
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+            return undefined; // Returner 0 for out-of-bounds celler
+        }
         let value = this.grid[row][col];
         return value;
     }
 
     set(row, col, value) {
+        if (row < 0 || row >= this.rows || col < 0 || col >= this.cols) {
+            return undefined; // Returner 0 for out-of-bounds celler
+        }
         this.grid[row][col] = value;
     }
 
