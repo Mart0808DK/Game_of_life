@@ -6,3 +6,4 @@
 - tilføje tilfældige celler
 
 ## deployment
+https://mart0808dk.github.io/Game_of_life/
