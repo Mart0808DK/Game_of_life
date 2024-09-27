@@ -201,8 +201,8 @@ export class Grid {
     }
 
     fill(value) {
-        for (let row = 0; row < this.rows.length; row++) {
-            for (let col = 0; col < this.cols.length; col++) {
+        for (let row = 0; row < this.row(); row++) {
+            for (let col = 0; col < this.col(); col++) {
                 this.grid[row][col] = value;
             }
         }

@@ -1,55 +1,44 @@
 import { Grid } from "./grid.js";
-//import { displayBoard} from "./view.js";
+import * as controller from "./controller.js"
 
-window.addEventListener("load", init);
+const GRID_HEIGHT = 40;
+const GRID_WIDTH = 40;
 
-const GRID_HEIGHT = 30;
-const GRID_WIDTH = 30;
+export let grid = new Grid(GRID_HEIGHT, GRID_WIDTH);
 
-let grid = new Grid(GRID_HEIGHT, GRID_WIDTH);
+
 
 function init() {
     console.log("Model kører");
+    // document.querySelector("#empty_grid").addEventListener("click", emptyGrid);
+    // document.querySelector("#add_random_cells").addEventListener("click", addRandomCells);
 
-    createBoard();
-    createCells();
-    setInterval(updateGrid, 2000)
+    // createBoard();
+    // createCells();
+    // gameInterval = setInterval(updateGrid, 2000);
 }
 
-function createCells() {
-    const board = document.querySelector("#board");
 
-    for (let row = 0; row < GRID_HEIGHT; row++) {
-        for (let col = 0; col < GRID_WIDTH; col++) {
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            // adds the row and column data to the cell element
-            cell.dataset.row = row;
-            cell.dataset.col = col;
-            // adds cell to the board
-            board.appendChild(cell);
 
-            const isAlive = Math.random() > 0.7 ? 1 : 0;
-            grid.set(row, col, isAlive);
+
+function addRandomCells() {
+    for (let row = 0; row < grid.rows; row++) {
+        for (let col = 0; col < grid.cols; col++) {
+            const value = grid.get(row, col);
+
+            if (value === 0) {
+                const randomCells = Math.random();
+                console.log(randomCells);
+
+                if (randomCells < 0.5) {
+                    grid.set(row, col, 1);
+                }
+            }
         }
-    }
-
-    renderGrid(grid); // Initial render of the grid
+    } 
+    controller.updateGrid();
 }
 
-
-
-function updateGrid() {
-    scanGrid();
-    renderGrid(grid);
-    setInterval(updateGrid, 2000);
-}
-
-function createBoard() {
-    const board = document.querySelector("#board");
-    board.style.setProperty("--GRID_WIDTH", GRID_WIDTH);
-    board.style.setProperty("--GRID_HEIGHT", GRID_HEIGHT);
-}
 
 function countNeightbours(row, col) {
     let count = 0;
@@ -79,15 +68,34 @@ function scanGrid() {
     grid = nextGeneration;
 }
 
+function checkIfGridIsDead() {
+    let amountOfDeadCells = 0;
+
+    for (let row = 0; row < grid.rows; row++) {
+        for (let col = 0; col < grid.cols; col++) {
+            const value = grid.get(row, col);
+            if (value === 0) {
+                amountOfDeadCells++;
+            }
+        }
+    }
+
+    if (amountOfDeadCells == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function decideIfCellDiesOrLives(row, col) {
     let value = grid.get(row, col);
     let neighbours = countNeightbours(row, col);
     let newValue;
 
     if (neighbours < 2 || neighbours > 3) {
-        newValue = 0; 
+        newValue = 0;
     } else if (neighbours == 2) {
-        newValue = value; 
+        newValue = value;
     } else if (neighbours == 3) {
         newValue = 1; // En ny celle bliver født, eller cellen lever videre
     }
@@ -95,18 +103,4 @@ function decideIfCellDiesOrLives(row, col) {
     return newValue;
 }
 
-function renderGrid(grid) {
-    const board = document.querySelector("#board");
-    for (let row = 0; row < GRID_HEIGHT; row++) {
-        for (let col = 0; col < GRID_WIDTH; col++) {
-            const cell = board.querySelector(`[data-row='${row}'][data-col='${col}']`);
-            if (grid.get(row, col) === 1) {
-                cell.style.backgroundColor = "black";
-            } else {
-                cell.style.backgroundColor = "white";
-            }
-        }
-    }
-}
-
-export { init, createCells, createBoard, countNeightbours, scanGrid, decideIfCellDiesOrLives, Grid };
+export { init, countNeightbours, scanGrid, decideIfCellDiesOrLives, addRandomCells, checkIfGridIsDead };
